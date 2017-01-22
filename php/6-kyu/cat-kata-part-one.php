@@ -1,13 +1,8 @@
 <?php
 
-function cat_safety_checker($yard, $distance) {
+function cat_safety_checker($yard, $minDistance) {
     $yard_as_dictionary = [];
-    $L_row = null;
-    $L_column = null;
-    $R_row = null;
-    $R_column = null;
-    $M_row = null;
-    $M_column = null;
+    $L_row = $L_column = $R_row = $R_column = $M_row = $M_column = null;
 
     foreach ($yard as $key => $value) {
       array_push($yard_as_dictionary, array_flip(str_split($value)));
@@ -28,26 +23,35 @@ function cat_safety_checker($yard, $distance) {
       }
     }
 
-    return (hypot((max($L_row, $R_row)-min($L_row, $R_row)), (max($L_column, $R_column)-min($L_column, $R_column))) < $distance ||
-        hypot((max($L_row, $M_row)-min($L_row, $M_row)), (max($L_column, $M_column)-min($L_column, $M_column))) < $distance ||
-        hypot((max($M_row, $R_row)-min($M_row, $R_row)), (max($M_column, $R_column)-min($M_column, $R_column))) < $distance) ? FALSE : TRUE;
+    //return $M_row.$M_column.$R_row.$R_column;
+    //return hypot((max($M_row, $R_row)-min($M_row, $R_row)), (max($M_column, $R_column)-min($M_column, $R_column)));
+    //return hypot((max($L_row, $R_row)-min($L_row, $R_row)), (max($L_column, $R_column)-min($L_column, $R_column)));
+    //return hypot((max($L_row, $M_row)-min($L_row, $M_row)), (max($L_column, $M_column)-min($L_column, $M_column)));
+    //return $L_column;
 
-    //return count($yard);
-    //return array_values(array_flip($yard_as_dictionary));
-    //return $yard_as_dictionary;
-    //return in_array("L", $yard_as_dictionary);
-    //return array_values($yard_as_dictionary);
-    //return array_search("-L----------", $yard);
-    //return hypot(3, 4);
-    echo cat_safety_checker();
+    if ((isset($R_column) + isset($M_column) + isset($L_column)) < 2) {
+      return TRUE;
+    } elseif (!isset($M_column)) {
+      return hypot((max($L_row, $R_row)-min($L_row, $R_row)), (max($L_column, $R_column)-min($L_column, $R_column))) < $minDistance ? FALSE : TRUE;
+    } elseif (!isset($R_column)) {
+      return hypot((max($L_row, $M_row)-min($L_row, $M_row)), (max($L_column, $M_column)-min($L_column, $M_column))) < $minDistance ? FALSE : TRUE;
+    } elseif (!isset($L_column)) {
+      return hypot((max($M_row, $R_row)-min($M_row, $R_row)), (max($M_column, $R_column)-min($M_column, $R_column))) < $minDistance ? FALSE : TRUE;
+    } else {
+      return hypot((max($L_row, $R_row)-min($L_row, $R_row)), (max($L_column, $R_column)-min($L_column, $R_column))) < $minDistance ||
+             hypot((max($L_row, $M_row)-min($L_row, $M_row)), (max($L_column, $M_column)-min($L_column, $M_column))) < $minDistance ||
+             hypot((max($M_row, $R_row)-min($M_row, $R_row)), (max($M_column, $R_column)-min($M_column, $R_column))) < $minDistance ? FALSE : TRUE;
+    }
 
 }
 
-//echo cat_safety_checker(array("------------", "------------", "-L----------", "------------", "------------", "------------"), 10);
-//print_r(cat_safety_checker(array("------------", "------------", "-L----------", "------------", "------------", "------------"), 10));
-print_r(cat_safety_checker(array("-----------L", "--R---------", "------------", "------------", "------------", "--M---------"), 4));
-
+echo cat_safety_checker(array("------------", "------------", "-----L------", "------------", "------------", "------------"), 10);
 echo "<br>";
+echo cat_safety_checker(array("------------", "---M--------", "------------", "------------", "-------R----", "------------"), 6);
+echo "<br>";
+echo cat_safety_checker(array("-----------L", "--R---------", "------------", "------------", "------------", "--M---------"), 4);
+echo "<br>";
+echo cat_safety_checker(array("--------------------", "-R------------------", "--------------------", "--------------------", "---------M----------", "--------------------", "--------------------", "--------------------", "--------------------", "--------------------"), 5);
 
 /* TEST CASES
 
